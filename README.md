@@ -1,6 +1,6 @@
 # Install pyenv on Ubuntu 20.04/ Ubuntu 21.04 by executing Bash script
 
-<img src="https://github.com/thraddash/install_pyenv/blob/master/mockup.png" width="800" title="Mockup">
+<img src="https://github.com/thraddash/install_pyenv/blob/master/mockup.png" width="600" title="Mockup">
 
 ## About the Project
 Created Bash script to automate pyenv installation in Ubuntu.   
