@@ -46,7 +46,7 @@ while [[ $CHECK -gt 0 || $CHECK -eq 0 ]]; do
   echo
   echo "===> press q to exit:"
   echo "===> press l to list available versions:"
-  echo "===> press r to remove installed pyenv versions:"
+  echo "===> press r to remove pyenv versions:"
   read TS
   if [[ -z $TS || $TS == "q" ]]; then 
     exit
