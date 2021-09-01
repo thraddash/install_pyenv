@@ -4,14 +4,17 @@ set -e
 echo "=====> Install pyenv on Ubuntu 20.04, 21.04 =====================>"
 echo
 echo "=====> 1.) Check & Install dependencies ====================>"
-echo "[ git python3-pip make build-essential libssl-dev zliblg-dev ]"
-echo "[ libbz2-dev libreadline-dev libsqlite3-dev curl ]" 
-echo 
 pkg="git python3-pip make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl" 
-for val in $pkg; do
-  status="$(dpkg-query -W --showformat='${db:Status-Status}' "$val" 2>&1)"
-  if [ ! $? = 0 ] || [ ! "$status" = installed ]; then
-    sudo apt install $val
+
+echo "[$pkg]"
+echo
+
+for i in $pkg; do
+  if [ $(dpkg-query -W -f='${Status}' $i 2>&1 | grep -c "ok installed") -eq 1 ]; then
+    echo "$i [already installed]"
+  elif [ $(dpkg-query -W -f='${Status}' $i 2>&1 | grep -c "ok installed") -eq 0 ]; then
+    echo "$i [installing $i...]"
+    sudo apt install $i
   fi
 done
 
