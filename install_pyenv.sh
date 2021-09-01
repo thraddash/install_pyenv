@@ -98,6 +98,7 @@ while [[ $CHECK -gt 0 || $CHECK -eq 0 ]]; do
     else 
       pyenv install $TS
       pyenv global $TS
+      source ~/.bashrc
       echo "$(python -V)"
     fi
   fi
