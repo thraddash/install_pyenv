@@ -1,14 +1,19 @@
 # Install pyenv on Ubuntu 20.04/ Ubuntu 21.04 by executing Bash script
 
-<img src="https://github.com/thraddash/install_pyenv/blob/master/mockup.png" width="600" title="Mockup">
+<img src="https://github.com/thraddash/install_pyenv/blob/master/mockup.png" width="800" title="Mockup">
 
 ## About the Project
 Created Bash script to automate pyenv installation in Ubuntu.   
-The script will run through 3 verifications before displaying current pyenv versions and prompting the users with 3 Options:     
+The script will run through 3 verifications before displaying current pyenv versions and prompting the users with 3 Options:   
+
+**Note:** after removing pyenv version, pyenv will be set to pyenv global system  
+**1st time running script:** pyenv version is blank  
+**2nd time running script:** pyenv current version will be displayed  
 
 [press **q** to exit]  
 [press **l** to list available pyenv versions to install, pyenv version will be set to default global version]  
-[press **r** to remove pyenv versions]
+[press **r** to remove pyenv versions]  
+
 
 #### 1. Script will check and install missing dependencies. 
 <details>
@@ -17,10 +22,12 @@ The script will run through 3 verifications before displaying current pyenv vers
   loop through pkg string containing dependencies and check if dependencies have been installed
   ```
   pkg="git python3-pip make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl"
-  for val in $pkg; do
-    status="$(dpkg-query -W --showformat='${db:Status-Status}' "$val" 2>&1)"
-    if [ ! $? = 0 ] || [ ! "$status" = installed ]; then
-      sudo apt install $val
+  for i in $pkg; do
+    if [ $(dpkg-query -W -f='${Status}' $i 2>&1 | grep -c "ok installed") -eq 1 ]; then
+      echo "$i [already installed]"
+    elif [ $(dpkg-query -W -f='${Status}' $i 2>&1 | grep -c "ok installed") -eq 0 ]; then
+      echo "$i [installing $i...]"
+      sudo apt-get install $i  > /dev/null
     fi
   done
   ```
@@ -37,7 +44,14 @@ The script will run through 3 verifications before displaying current pyenv vers
   <summary>Click Here for Details</summary>
   
   ```
-  sudo pip3 -qq install virtualenvwrapper
+  if [[ $(sudo pip3 list |grep virtualenvwrapper | wc -l) -eq 0 ]]; then 
+    echo virtualenvwrapper [installing virutualenvwrapper...] 
+    sudo pip3 install virtualenvwrapper > /dev/null
+    echo
+  elif [[ $(sudo pip3 list |grep virtualenvwrapper | wc -l) -eq 1 ]]; then 
+    echo virtualenvwrapper [already installed] 
+    echo
+  fi
   ```
 </details>
 
@@ -46,11 +60,28 @@ The script will run through 3 verifications before displaying current pyenv vers
   <summary>Click Here for Details</summary>
   
   ```
-  git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-  
-  echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-  echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-  echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init --path)"\nfi' >> ~/.bashrc
+  if [ -d ~/.pyenv/ ]; then 
+    echo "[~/.pyenv directory exists]"
+  else
+    echo "git clone https://github.com/pyenv/pyenv.git ~/.pyenv"
+    git clone https://github.com/pyenv/pyenv.git ~/.pyenv 
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' > ~/.bashrc
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' > ~/.bashrc
+    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init --path)"\nfi' >> ~/.bashrc
+    source ~/.bashrc
+    echo
+  fi
+
+  if [ ! -d ~/.pyenv/versions/ ]; then 
+    echo "[Currently no pyenv version is installed]"
+    echo
+  else
+    echo "current version is: `pyenv versions | grep "* [23]\.[6789]" | awk '{print $2}'`"
+    echo "# pyenv versions"
+    echo "# pyenv which python"
+    echo "# python -V"
+    echo
+  fi 
   ```
 </details>
 
