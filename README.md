@@ -1,9 +1,9 @@
-# Install pyenv on Ubuntu 20.04/ Ubuntu 21.04 by executing Bash script
+# Install Python Version Manager using pyenv (tested on Ubuntu 20.04/ Ubuntu 21.04)
 
 <img src="https://github.com/thraddash/install_pyenv/blob/master/mockup.png" width="800" title="Mockup">
 
 ## About the Project
-Created Bash script to automate pyenv installation in Ubuntu.   
+Created Bash script to automate pyenv installation on Ubuntu 20.04/ Ubuntu 21.04.   
 The script will run through 3 verifications before displaying current pyenv versions and prompting the users with 3 Options:   
 
 **Note:** after removing pyenv version, pyenv will be set to pyenv global system  
