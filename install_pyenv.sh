@@ -14,38 +14,54 @@ for i in $pkg; do
     echo "$i [already installed]"
   elif [ $(dpkg-query -W -f='${Status}' $i 2>&1 | grep -c "ok installed") -eq 0 ]; then
     echo "$i [installing $i...]"
-    sudo apt install $i
+    sudo apt-get install $i  > /dev/null
   fi
 done
+echo
 
 echo "=====> 2.) Check pip3 install virtualenvwrapper ======================>"
-echo 
-PIP_CHECK="$(sudo pip3 list | grep virtualenvwrapper | wc -l)"
-if [[ $PIP_CHECK -eq 0 ]]; then 
-  sudo pip3 install virtualenvwrapper
+if [[ $(sudo pip3 list |grep virtualenvwrapper | wc -l) -eq 0 ]]; then 
+  echo virtualenvwrapper [installing virutualenvwrapper...] 
+  sudo pip3 install virtualenvwrapper > /dev/null
+  echo
+elif [[ $(sudo pip3 list |grep virtualenvwrapper | wc -l) -eq 1 ]]; then 
+  echo virtualenvwrapper [already installed] 
+  echo
 fi
 
 echo "=====> 3.) Check if pyenv dir, install, source .bashrc ===============>"
 echo
 
-if [ ! -d ~/.pyenv/ ]
-then
-  git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-  echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-  echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+if [ -d ~/.pyenv/ ]; then 
+  echo "[~/.pyenv directory exists]"
+else
+  echo "git clone https://github.com/pyenv/pyenv.git ~/.pyenv"
+  git clone https://github.com/pyenv/pyenv.git ~/.pyenv 
+  echo 'export PYENV_ROOT="$HOME/.pyenv"' > ~/.bashrc
+  echo 'export PATH="$PYENV_ROOT/bin:$PATH"' > ~/.bashrc
   echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init --path)"\nfi' >> ~/.bashrc
-
   source ~/.bashrc
+  echo
 fi
 
-CHECK=$(ls ~/.pyenv/versions/ |wc -l)
+if [ ! -d ~/.pyenv/versions/ ]; then 
+  echo "[Currently no pyenv version is installed]"
+  echo
+else
+  echo "current version is: `pyenv versions | grep "* [23]\.[6789]" | awk '{print $2}'`"
+  echo "# pyenv versions"
+  echo "# pyenv which python"
+  echo "# python -V"
+  echo
+fi 
+
+CHECK=$(ls ~/.pyenv/ | grep versions | wc -l)
 while [[ $CHECK -gt 0 || $CHECK -eq 0 ]]; do
   echo "##############################################################"
-  echo "####    Current pyenv versions                            ####"
-  echo "$(pyenv versions)"
-  echo 
-  echo "(pyenv which python:) $(pyenv which python)"
-  echo "(python -V:) $(python -V)"
+  echo "####    Menu: Install a pyenv                             ####"
+  #echo "$(pyenv versions)"
+  #echo "(pyenv which python:) $(pyenv which python)"
+  #echo "(python -V:) $(python -V)"
   echo
   echo "===> press q to exit:"
   echo "===> press l to list available versions:"
@@ -69,6 +85,7 @@ while [[ $CHECK -gt 0 || $CHECK -eq 0 ]]; do
       else 
         #echo "$(rm -rf ~/.pyenv/versions/$TS)" 
         echo "$(pyenv uninstall $TS)"
+        pyenv global system
       fi
     fi 
   elif [[ $TS  == "l" ]]; then
