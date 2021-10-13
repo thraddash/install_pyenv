@@ -90,7 +90,7 @@ while [[ $CHECK -gt 0 || $CHECK -eq 0 ]]; do
     fi 
   elif [[ $TS  == "l" ]]; then
     pyenv install --list | grep " [23]\.[6789]"
-    ecgi "===> pyenv install --list
+    echo "===> pyenv install --list"
     echo "===> pick from the above version list"
     read TS
     if [[ -z $TS ]]; then
