@@ -90,12 +90,16 @@ while [[ $CHECK -gt 0 || $CHECK -eq 0 ]]; do
     fi 
   elif [[ $TS  == "l" ]]; then
     pyenv install --list | grep " [23]\.[6789]"
+    ecgi "===> pyenv install --list
     echo "===> pick from the above version list"
     read TS
     if [[ -z $TS ]]; then
       echo "===> you didn't enter anything... aborting"
       exit
     else 
+      echo "===> pyenv install -v $TS (hide output by removing -v flag)"
+      echo "===> pyenv global $TS"
+      echo "===> source ~/.bashrc"
       pyenv install $TS
       pyenv global $TS
       source ~/.bashrc
